@@ -24,7 +24,7 @@ export default class MulticastSource {
   }
 
   _dispose() {
-      const disposable = this_disposable;
+      const disposable = this._disposable;
       this._disposable = void 0;
       return Promise.resolve(disposable).then(dispose);
   }
@@ -64,11 +64,11 @@ export default class MulticastSource {
   error(time, err) {
       const s = this.sinks;
       if (s.length === 1) {
-          s[0].end(time, err);
+          s[0].error(time, err);
           return;
       }
       for (let i = 0; i < s.length; ++i) {
-          s[i].end(time, err);
+          s[i].error(time, err);
       }
   }
 }
