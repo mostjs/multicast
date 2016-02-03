@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tylors/most-multicast.git"
+    "url": "git+https://github.com/mostjs/multicast.git"
   },
   "keywords": [
     "most",
@@ -31,9 +31,9 @@
   "author": "Tylor Steinberer <tlsteinberger167@gmail.com> (github.com/TylorS)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tylors/most-multicast/issues"
+    "url": "https://github.com/mostjs/multicast/issues"
   },
-  "homepage": "https://github.com/tylors/most-multicast#readme",
+  "homepage": "https://github.com/mostjs/multicast#readme",
   "devDependencies": {
     "assert": "^1.3.0",
     "babel-cli": "^6.4.5",
