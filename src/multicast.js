@@ -8,4 +8,4 @@ function multicast(stream) {
       new Stream(new MulticastSource(source));
 }
 
-export default multicast;
+export {multicast as default, MulticastSource};
