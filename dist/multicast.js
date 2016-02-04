@@ -16,6 +16,7 @@
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.MulticastSource = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -146,7 +147,7 @@
         }, {
             key: '_dispose',
             value: function _dispose() {
-                var disposable = this_disposable;
+                var disposable = this._disposable;
                 this._disposable = void 0;
                 return Promise.resolve(disposable).then(dispose);
             }
@@ -196,12 +197,12 @@
                 var s = this.sinks;
 
                 if (s.length === 1) {
-                    s[0].end(time, err);
+                    s[0].error(time, err);
                     return;
                 }
 
                 for (var i = 0; i < s.length; ++i) {
-                    s[i].end(time, err);
+                    s[i].error(time, err);
                 }
             }
         }]);
@@ -214,5 +215,6 @@
         return source instanceof MulticastSource ? stream : new _most.Stream(new MulticastSource(source));
     }
 
+    exports.MulticastSource = MulticastSource;
     exports.default = multicast;
 });
