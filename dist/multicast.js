@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define('@most/multicast', ['exports', 'most'], factory);
+        define('@most/multicast', ['exports', 'most', '@most/prelude'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('most'));
+        factory(exports, require('most'), require('@most/prelude'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.most);
+        factory(mod.exports, global.most, global.prelude);
         global.mostMulticast = mod.exports;
     }
-})(this, function (exports, _most) {
+})(this, function (exports, _most, _prelude) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -62,60 +62,6 @@
         return MulticastDisposable;
     }();
 
-    function append(x, a) {
-        var l = a.length;
-        var b = new Array(l + 1);
-
-        for (var i = 0; i < l; ++i) {
-            b[i] = a[i];
-        }
-
-        b[l] = x;
-        return b;
-    }
-
-    function unsafeRemove(index, a, l) {
-        var b = new Array(l);
-        var i = undefined;
-
-        for (i = 0; i < index; ++i) {
-            b[i] = a[i];
-        }
-
-        for (i = index; i < l; ++i) {
-            b[i] = a[i + 1];
-        }
-
-        return b;
-    }
-
-    function _remove(index, array) {
-        var l = array.length;
-
-        if (l === 0 || index >= array) {
-            return array;
-        }
-
-        if (l === 1) {
-            return [];
-        }
-
-        return unsafeRemove(index, array, l - 1);
-    }
-
-    function findIndex(x, a) {
-        var i = 0;
-        var l = a.length;
-
-        for (; i < l; ++i) {
-            if (x === a[i]) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
     function dispose(disposable) {
         if (disposable === void 0) {
             return;
@@ -154,13 +100,13 @@
         }, {
             key: 'add',
             value: function add(sink) {
-                this.sinks = append(sink, this.sinks);
+                this.sinks = (0, _prelude.append)(sink, this.sinks);
                 return this.sinks.length;
             }
         }, {
             key: 'remove',
             value: function remove(sink) {
-                this.sinks = _remove(findIndex(sink, this.sinks), this.sinks);
+                this.sinks = (0, _prelude.remove)((0, _prelude.findIndex)(sink, this.sinks), this.sinks);
                 return this.sinks.length;
             }
         }, {
