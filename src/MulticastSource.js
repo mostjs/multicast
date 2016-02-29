@@ -1,5 +1,5 @@
 import MulticastDisposable from './MulticastDisposable';
-import {append, remove, findIndex} from './util';
+import {append, remove, findIndex} from '@most/prelude';
 
 function dispose(disposable) {
     if (disposable === void 0) {
