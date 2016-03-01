@@ -41,7 +41,7 @@ describe('MulticastSource', () => {
 		const second = (_, y) => y
 
 		Promise.all([reduce(second, other, s), reduce(second, other, s)])
-		.then((values) => {
+		.then(values => {
 			assert.strictEqual(values[0], sentinel) /
 			assert.strictEqual(values[1], sentinel)
 		})

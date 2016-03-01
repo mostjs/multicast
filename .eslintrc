@@ -7,6 +7,7 @@
     }
   },
   "rules": {
-    "indent": [2, "tab", {SwitchCase: 1}]
+    "indent": [2, "tab", {SwitchCase: 1}],
+    "arrow-parens": [2, "as-needed"]
   }
 }
