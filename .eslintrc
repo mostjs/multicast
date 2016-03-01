@@ -5,5 +5,8 @@
       "experimentalObjectRestSpread": false,
       "jsx": false
     }
+  },
+  "rules": {
+    "indent": [2, "tab", {SwitchCase: 1}]
   }
 }
