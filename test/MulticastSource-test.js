@@ -2,7 +2,7 @@ import {describe, it} from 'mocha'
 import assert from 'assert'
 import sinon from 'sinon'
 
-import {of, reduce, drain, Stream} from 'most'
+import {of, map, from, reduce, drain, Stream} from 'most'
 import scheduler from 'most/lib/scheduler/defaultScheduler'
 
 import MulticastSource from '../src/MulticastSource'
@@ -12,7 +12,7 @@ const sentinel = {value: 'sentinel'}
 const other = {value: 'other'}
 
 describe('MulticastSource', () => {
-  it('should call producer on first subscriber', () => {
+  it('should call producer on first observer', () => {
     const eventSpy = sinon.spy()
     const s = new MulticastSource({run: () => {}})
 
@@ -22,11 +22,11 @@ describe('MulticastSource', () => {
     assert.strictEqual(eventSpy.calledOnce, true)
   })
 
-  it('should call producer ONLY on the first subscriber', () => {
+  it('should call producer ONLY on the first observer', () => {
     const sourceSpy = sinon.spy()
     const s = new MulticastSource({run: sourceSpy})
 
-    Promise.all([
+    return Promise.all([
       s.run({event: () => {}}, scheduler),
       s.run({event: () => {}}, scheduler),
       s.run({event: () => {}}, scheduler),
@@ -36,22 +36,38 @@ describe('MulticastSource', () => {
     })
   })
 
-  it('should publish events to all subscribers', () => {
-    const s = new MulticastSource(of(sentinel).source)
+  it('should publish events to all observers', () => {
+    const s = new Stream(new MulticastSource(of(sentinel).source))
     const second = (_, y) => y
 
-    Promise.all([reduce(second, other, s), reduce(second, other, s)])
-      .then(values => {
-        assert.strictEqual(values[0], sentinel) /
-        assert.strictEqual(values[1], sentinel)
-      })
+    return Promise.all([
+      reduce(second, other, s),
+      reduce(second, other, s)
+    ]).then(([a, b]) => {
+      assert.strictEqual(a, sentinel)
+      assert.strictEqual(b, sentinel)
+    })
   })
 
-  it('should call dispose if all subscribers disconnect', () => {
+  it('should propagate errors only to errored observer', () => {
+    const s = new Stream(new MulticastSource(from([1, 2]).source))
+    const error = new Error()
+
+    const p1 = drain(s)
+    const p2 = drain(map(() => { throw error }, s))
+        .catch(e => e)
+
+    return Promise.all([p1, p2]).then(([a, b]) => {
+      assert.notStrictEqual(a, error)
+      assert.strictEqual(b, error)
+    })
+  })
+
+  it('should call dispose if all observers disconnect', () => {
     const spy = sinon.spy()
     const s = new Stream(new MulticastSource(FakeDisposeSource.from(spy, of(sentinel))))
 
-    Promise.all([drain(s), drain(s)]).then(() => {
+    return Promise.all([drain(s), drain(s)]).then(() => {
       assert.strictEqual(spy.calledOnce, true)
     })
   })

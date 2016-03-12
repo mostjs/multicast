@@ -2,7 +2,7 @@ import {describe, it} from 'mocha'
 import assert from 'assert'
 import sinon from 'sinon'
 import {of, map, observe} from 'most'
-import multicast from '../src/multicast'
+import multicast from '../src/index'
 
 describe('multicast', () => {
   it('should call mapper function once when there are > 1 observer', () => {

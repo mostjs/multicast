@@ -7,7 +7,7 @@
     "dist/multicast.js"
   ],
   "scripts": {
-    "build-dist": "mkdir -p dist && rollup src/multicast.js | babel --presets es2015 --plugins transform-es2015-modules-umd --module-id '@most/multicast' -o dist/multicast.js",
+    "build-dist": "mkdir -p dist && rollup src/index.js | babel --presets es2015 --plugins transform-es2015-modules-umd --module-id '@most/multicast' -o dist/multicast.js",
     "build": "npm run build-dist && uglifyjs dist/multicast.js -o dist/multicast.min.js",
     "prepublish": "npm run build",
     "preversion": "npm run build",

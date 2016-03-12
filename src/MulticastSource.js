@@ -42,22 +42,22 @@ export default class MulticastSource {
   event (time, value) {
     const s = this.sinks
     if (s.length === 1) {
-      s[0].event(time, value)
+      tryEvent(time, value, s[0])
       return
     }
     for (let i = 0; i < s.length; ++i) {
-      s[i].event(time, value)
+      tryEvent(time, value, s[i])
     }
   }
 
   end (time, value) {
     const s = this.sinks
     if (s.length === 1) {
-      s[0].end(time, value)
+      tryEnd(time, value, s[0])
       return
     }
     for (let i = 0; i < s.length; ++i) {
-      s[i].end(time, value)
+      tryEnd(time, value, s[i])
     }
   }
 
@@ -70,5 +70,21 @@ export default class MulticastSource {
     for (let i = 0; i < s.length; ++i) {
       s[i].error(time, err)
     }
+  }
+}
+
+function tryEvent (t, x, sink) {
+  try {
+    sink.event(t, x)
+  } catch (e) {
+    sink.error(t, e)
+  }
+}
+
+function tryEnd (t, x, sink) {
+  try {
+    sink.end(t, x)
+  } catch (e) {
+    sink.error(t, e)
   }
 }
