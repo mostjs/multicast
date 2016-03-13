@@ -1,18 +1,13 @@
 import MulticastDisposable from './MulticastDisposable'
-import {append, remove, findIndex} from '@most/prelude'
-
-function dispose (disposable) {
-  if (disposable === void 0) {
-    return
-  }
-  return disposable.dispose()
-}
+import { tryEvent, tryEnd } from './tryEvent'
+import { dispose, emptyDisposable } from './dispose'
+import { append, remove, findIndex } from '@most/prelude'
 
 export default class MulticastSource {
   constructor (source) {
     this.source = source
     this.sinks = []
-    this._disposable = void 0
+    this._disposable = emptyDisposable
   }
 
   run (sink, scheduler) {
@@ -70,21 +65,5 @@ export default class MulticastSource {
     for (let i = 0; i < s.length; ++i) {
       s[i].error(time, err)
     }
-  }
-}
-
-function tryEvent (t, x, sink) {
-  try {
-    sink.event(t, x)
-  } catch (e) {
-    sink.error(t, e)
-  }
-}
-
-function tryEnd (t, x, sink) {
-  try {
-    sink.end(t, x)
-  } catch (e) {
-    sink.error(t, e)
   }
 }

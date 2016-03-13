@@ -5,6 +5,11 @@ import {of, map, observe} from 'most'
 import multicast from '../src/index'
 
 describe('multicast', () => {
+  it('should be identity for already-multicasted stream', () => {
+    const s = multicast(of(1))
+    assert.strictEqual(s, multicast(s))
+  })
+
   it('should call mapper function once when there are > 1 observer', () => {
     const mapperSpy = sinon.spy()
     const observer1Spy = sinon.spy()

@@ -7,6 +7,7 @@ import scheduler from 'most/lib/scheduler/defaultScheduler'
 
 import MulticastSource from '../src/MulticastSource'
 import FakeDisposeSource from './helper/FakeDisposeSource'
+import { sinkSpy } from './helper/sinkSpy'
 
 const sentinel = {value: 'sentinel'}
 const other = {value: 'other'}
@@ -47,6 +48,35 @@ describe('MulticastSource', () => {
       assert.strictEqual(a, sentinel)
       assert.strictEqual(b, sentinel)
     })
+  })
+
+  it('should propagate errors', () => {
+    const fakeSource = {
+      run () {}
+    }
+
+    const ms = new MulticastSource(fakeSource)
+    const s1 = sinkSpy()
+    ms.run(s1, scheduler)
+
+    const e1 = new Error()
+    ms.error(1, e1)
+    assert.strictEqual(1, s1.errorCalled)
+    assert.strictEqual(1, s1.errorTime)
+    assert.strictEqual(e1, s1.errorValue)
+
+    const s2 = sinkSpy()
+    ms.run(s2, scheduler)
+
+    const e2 = new Error()
+    ms.error(2, e2)
+    assert.strictEqual(2, s1.errorCalled)
+    assert.strictEqual(2, s1.errorTime)
+    assert.strictEqual(e2, s1.errorValue)
+
+    assert.strictEqual(1, s2.errorCalled)
+    assert.strictEqual(2, s2.errorTime)
+    assert.strictEqual(e2, s2.errorValue)
   })
 
   it('should propagate errors only to errored observer', () => {
