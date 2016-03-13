@@ -1,3 +1,4 @@
 {
-    "threshold": 35
+    "threshold": 30,
+    "identifiers": true
 }
