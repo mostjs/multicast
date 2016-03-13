@@ -62,13 +62,29 @@
     return MulticastDisposable;
   }();
 
-  function dispose(disposable) {
-    if (disposable === void 0) {
-      return;
+  function tryEvent(t, x, sink) {
+    try {
+      sink.event(t, x);
+    } catch (e) {
+      sink.error(t, e);
     }
-
-    return disposable.dispose();
   }
+
+  function tryEnd(t, x, sink) {
+    try {
+      sink.end(t, x);
+    } catch (e) {
+      sink.error(t, e);
+    }
+  }
+
+  var dispose = function dispose(disposable) {
+    return disposable.dispose();
+  };
+
+  var emptyDisposable = {
+    dispose: function dispose() {}
+  };
 
   var MulticastSource = function () {
     function MulticastSource(source) {
@@ -76,7 +92,7 @@
 
       this.source = source;
       this.sinks = [];
-      this._disposable = void 0;
+      this._disposable = emptyDisposable;
     }
 
     _createClass(MulticastSource, [{
@@ -115,12 +131,12 @@
         var s = this.sinks;
 
         if (s.length === 1) {
-          s[0].event(time, value);
+          tryEvent(time, value, s[0]);
           return;
         }
 
         for (var i = 0; i < s.length; ++i) {
-          s[i].event(time, value);
+          tryEvent(time, value, s[i]);
         }
       }
     }, {
@@ -129,12 +145,12 @@
         var s = this.sinks;
 
         if (s.length === 1) {
-          s[0].end(time, value);
+          tryEnd(time, value, s[0]);
           return;
         }
 
         for (var i = 0; i < s.length; ++i) {
-          s[i].end(time, value);
+          tryEnd(time, value, s[i]);
         }
       }
     }, {
