@@ -1,16 +1,16 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define('@most/multicast', ['exports', 'most', '@most/prelude'], factory);
+    define('@most/multicast', ['exports', '@most/prelude'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports, require('most'), require('@most/prelude'));
+    factory(exports, require('@most/prelude'));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports, global.most, global.prelude);
+    factory(mod.exports, global.prelude);
     global.mostMulticast = mod.exports;
   }
-})(this, function (exports, _most, _prelude) {
+})(this, function (exports, _prelude) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -174,7 +174,7 @@
 
   function multicast(stream) {
     var source = stream.source;
-    return source instanceof MulticastSource ? stream : new _most.Stream(new MulticastSource(source));
+    return source instanceof MulticastSource ? stream : new stream.constructor(new MulticastSource(source));
   }
 
   exports.MulticastSource = MulticastSource;
