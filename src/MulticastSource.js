@@ -37,7 +37,7 @@ export default class MulticastSource {
   event (time, value) {
     const s = this.sinks
     if (s.length === 1) {
-      tryEvent(time, value, s[0])
+      s[0].event(time, value)
       return
     }
     for (let i = 0; i < s.length; ++i) {
@@ -48,7 +48,7 @@ export default class MulticastSource {
   end (time, value) {
     const s = this.sinks
     if (s.length === 1) {
-      tryEnd(time, value, s[0])
+      s[0].end(time, value)
       return
     }
     for (let i = 0; i < s.length; ++i) {
@@ -58,10 +58,6 @@ export default class MulticastSource {
 
   error (time, err) {
     const s = this.sinks
-    if (s.length === 1) {
-      s[0].error(time, err)
-      return
-    }
     for (let i = 0; i < s.length; ++i) {
       s[i].error(time, err)
     }
