@@ -99,11 +99,9 @@
       key: 'run',
       value: function run(sink, scheduler) {
         var n = this.add(sink);
-
         if (n === 1) {
           this._disposable = this.source.run(this, scheduler);
         }
-
         return new MulticastDisposable(this, sink);
       }
     }, {
@@ -129,12 +127,10 @@
       key: 'event',
       value: function event(time, value) {
         var s = this.sinks;
-
         if (s.length === 1) {
-          tryEvent(time, value, s[0]);
+          s[0].event(time, value);
           return;
         }
-
         for (var i = 0; i < s.length; ++i) {
           tryEvent(time, value, s[i]);
         }
@@ -143,12 +139,10 @@
       key: 'end',
       value: function end(time, value) {
         var s = this.sinks;
-
         if (s.length === 1) {
-          tryEnd(time, value, s[0]);
+          s[0].end(time, value);
           return;
         }
-
         for (var i = 0; i < s.length; ++i) {
           tryEnd(time, value, s[i]);
         }
@@ -157,12 +151,6 @@
       key: 'error',
       value: function error(time, err) {
         var s = this.sinks;
-
-        if (s.length === 1) {
-          s[0].error(time, err);
-          return;
-        }
-
         for (var i = 0; i < s.length; ++i) {
           s[i].error(time, err);
         }
