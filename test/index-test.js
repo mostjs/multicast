@@ -1,7 +1,7 @@
 import {describe, it} from 'mocha'
 import assert from 'assert'
 import sinon from 'sinon'
-import {of, map, observe} from 'most'
+import {of, map, observe} from '@most/core'
 import multicast from '../src/index'
 
 describe('multicast', () => {

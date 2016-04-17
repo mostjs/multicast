@@ -2,7 +2,7 @@ import {describe, it} from 'mocha'
 import assert from 'assert'
 import sinon from 'sinon'
 
-import {of, map, from, reduce, drain, Stream} from 'most'
+import {of, map, from, reduce, drain, Stream} from '@most/core'
 import scheduler from 'most/lib/scheduler/defaultScheduler'
 
 import MulticastSource from '../src/MulticastSource'
