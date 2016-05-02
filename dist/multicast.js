@@ -48,14 +48,18 @@
 
       this.source = source;
       this.sink = sink;
+      this.disposed = false;
     }
 
     _createClass(MulticastDisposable, [{
       key: 'dispose',
       value: function dispose() {
-        var s = this.source;
-        var remaining = s.remove(this.sink);
-        return remaining === 0 && s._dispose();
+        if (this.disposed) {
+          return;
+        }
+        this.disposed = true;
+        var remaining = this.source.remove(this.sink);
+        return remaining === 0 && this.source._dispose();
       }
     }]);
 
