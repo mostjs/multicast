@@ -95,6 +95,7 @@
       _classCallCheck(this, MulticastSource);
 
       this.source = source;
+      this.sink = undefined;
       this.sinks = [];
       this._disposable = emptyDisposable;
     }
@@ -118,35 +119,45 @@
     }, {
       key: 'add',
       value: function add(sink) {
+        if (this.sink === undefined) {
+          this.sink = sink;
+          return 1;
+        }
+
         this.sinks = (0, _prelude.append)(sink, this.sinks);
-        return this.sinks.length;
+        return this.sinks.length + 1;
       }
     }, {
       key: 'remove',
       value: function remove(sink) {
+        if (sink === this.sink) {
+          this.sink = this.sinks.shift();
+          return this.sink === undefined ? 0 : this.sinks.length + 1;
+        }
+
         this.sinks = (0, _prelude.remove)((0, _prelude.findIndex)(sink, this.sinks), this.sinks);
-        return this.sinks.length;
+        return this.sinks.length + 1;
       }
     }, {
       key: 'event',
       value: function event(time, value) {
         var s = this.sinks;
-        if (s.length === 1) {
-          s[0].event(time, value);
-          return;
-        }
-        for (var i = 0; i < s.length; ++i) {
-          tryEvent(time, value, s[i]);
+        if (s.length === 0) {
+          this.sink.event(time, value);
+        } else {
+          tryEvent(time, value, this.sink);
+          for (var i = 0; i < s.length; ++i) {
+            tryEvent(time, value, s[i]);
+          }
         }
       }
     }, {
       key: 'end',
       value: function end(time, value) {
-        var s = this.sinks;
-        if (s.length === 1) {
-          s[0].end(time, value);
-          return;
-        }
+        // Important: slice first since sink.end may change
+        // the set of sinks
+        var s = this.sinks.slice();
+        tryEnd(time, value, this.sink);
         for (var i = 0; i < s.length; ++i) {
           tryEnd(time, value, s[i]);
         }
@@ -154,7 +165,10 @@
     }, {
       key: 'error',
       value: function error(time, err) {
-        var s = this.sinks;
+        // Important: slice first since sink.error may change
+        // the set of sinks
+        var s = this.sinks.slice();
+        this.sink.error(time, err);
         for (var i = 0; i < s.length; ++i) {
           s[i].error(time, err);
         }
