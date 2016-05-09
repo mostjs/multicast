@@ -45,15 +45,20 @@ export default class MulticastSource {
     return this.sinks.length + 1
   }
 
-  event (time, value) {
+  event (time, value) { // eslint-disable-line complexity
+    if (this.sink === undefined) {
+      return
+    }
+
     const s = this.sinks
     if (s.length === 0) {
       this.sink.event(time, value)
-    } else {
-      tryEvent(time, value, this.sink)
-      for (let i = 0; i < s.length; ++i) {
-        tryEvent(time, value, s[i])
-      }
+      return
+    }
+
+    tryEvent(time, value, this.sink)
+    for (let i = 0; i < s.length; ++i) {
+      tryEvent(time, value, s[i])
     }
   }
 
