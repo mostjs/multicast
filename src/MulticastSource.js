@@ -21,7 +21,7 @@ export default class MulticastSource {
 
   _dispose () {
     const disposable = this._disposable
-    this._disposable = void 0
+    this._disposable = emptyDisposable
     this.sink = none()
     return Promise.resolve(disposable).then(dispose)
   }
