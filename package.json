@@ -11,7 +11,7 @@
     "build": "npm run build-dist && uglifyjs dist/multicast.js -o dist/multicast.min.js",
     "prepublish": "npm run build",
     "preversion": "npm run build",
-    "unit-test": "babel-node ./node_modules/.bin/isparta cover _mocha",
+    "unit-test": "babel-node ./node_modules/.bin/isparta cover _mocha -- --reporter dot",
     "lint": "jsinspect src && jsinspect test && eslint src test",
     "test": "npm run lint && npm run unit-test"
   },

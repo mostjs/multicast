@@ -1,13 +1,12 @@
 import MulticastDisposable from './MulticastDisposable'
-import { tryEvent, tryEnd } from './tryEvent'
 import { dispose, emptyDisposable } from './dispose'
-import { append, remove, findIndex } from '@most/prelude'
+import { none, addSink, removeSink } from './sink'
 
 export default class MulticastSource {
   constructor (source) {
     this.source = source
-    this.sink = undefined
-    this.sinks = []
+    this.sink = none()
+    this.activeCount = 0
     this._disposable = emptyDisposable
   }
 
@@ -16,69 +15,42 @@ export default class MulticastSource {
     if (n === 1) {
       this._disposable = this.source.run(this, scheduler)
     }
+
     return new MulticastDisposable(this, sink)
   }
 
   _dispose () {
     const disposable = this._disposable
-    this._disposable = void 0
+    this._disposable = emptyDisposable
+    this.sink = none()
     return Promise.resolve(disposable).then(dispose)
   }
 
   add (sink) {
-    if (this.sink === undefined) {
-      this.sink = sink
-      return 1
-    }
-
-    this.sinks = append(sink, this.sinks)
-    return this.sinks.length + 1
+    this.sink = addSink(sink, this.sink)
+    this.activeCount += 1
+    return this.activeCount
   }
 
   remove (sink) {
-    if (sink === this.sink) {
-      this.sink = this.sinks.shift()
-      return this.sink === undefined ? 0 : this.sinks.length + 1
+    const s = this.sink
+    this.sink = removeSink(sink, this.sink)
+    // istanbul ignore else
+    if (s !== this.sink) {
+      this.activeCount -= 1
     }
-
-    this.sinks = remove(findIndex(sink, this.sinks), this.sinks)
-    return this.sinks.length + 1
+    return this.activeCount
   }
 
-  event (time, value) { // eslint-disable-line complexity
-    if (this.sink === undefined) {
-      return
-    }
-
-    const s = this.sinks
-    if (s.length === 0) {
-      this.sink.event(time, value)
-      return
-    }
-
-    tryEvent(time, value, this.sink)
-    for (let i = 0; i < s.length; ++i) {
-      tryEvent(time, value, s[i])
-    }
+  event (time, value) {
+    this.sink.event(time, value)
   }
 
   end (time, value) {
-    // Important: slice first since sink.end may change
-    // the set of sinks
-    const s = this.sinks.slice()
-    tryEnd(time, value, this.sink)
-    for (let i = 0; i < s.length; ++i) {
-      tryEnd(time, value, s[i])
-    }
+    this.sink.end(time, value)
   }
 
   error (time, err) {
-    // Important: slice first since sink.error may change
-    // the set of sinks
-    const s = this.sinks.slice()
     this.sink.error(time, err)
-    for (let i = 0; i < s.length; ++i) {
-      s[i].error(time, err)
-    }
   }
 }
