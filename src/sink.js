@@ -4,7 +4,7 @@ import { tryEvent, tryEnd } from './tryEvent'
 export const addSink = (sink, sinks) =>
   sinks === NONE ? sink
     : sinks instanceof Many ? new Many(append(sink, sinks.sinks))
-    : new Many([sink, sinks])
+    : new Many([sinks, sink])
 
 export const removeSink = (sink, sinks) => // eslint-disable-line complexity
   sinks === NONE || sink === sinks ? NONE
@@ -19,8 +19,9 @@ const removeMany = (sink, many) => {
 
 const removeManyAt = (i, sinks) => {
   const updated = remove(i, sinks)
-  return updated.length === 0 ? NONE
-    : updated.length === 1 ? updated[0]
+  // It's impossible to create a Many with 1 sink
+  // so we can't end up with updated.length === 0 here
+  return updated.length === 1 ? updated[0]
     : new Many(updated)
 }
 

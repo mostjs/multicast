@@ -35,6 +35,7 @@ export default class MulticastSource {
   remove (sink) {
     const s = this.sink
     this.sink = removeSink(sink, this.sink)
+    // istanbul ignore else
     if (s !== this.sink) {
       this.activeCount -= 1
     }
