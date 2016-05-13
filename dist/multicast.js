@@ -95,7 +95,6 @@
       _classCallCheck(this, MulticastSource);
 
       this.source = source;
-      this.sink = undefined;
       this.sinks = [];
       this._disposable = emptyDisposable;
     }
@@ -113,46 +112,33 @@
       key: '_dispose',
       value: function _dispose() {
         var disposable = this._disposable;
-        this._disposable = void 0;
+        this._disposable = emptyDisposable;
         return Promise.resolve(disposable).then(dispose);
       }
     }, {
       key: 'add',
       value: function add(sink) {
-        if (this.sink === undefined) {
-          this.sink = sink;
-          return 1;
-        }
-
         this.sinks = (0, _prelude.append)(sink, this.sinks);
-        return this.sinks.length + 1;
+        return this.sinks.length;
       }
     }, {
       key: 'remove',
       value: function remove(sink) {
-        if (sink === this.sink) {
-          this.sink = this.sinks.shift();
-          return this.sink === undefined ? 0 : this.sinks.length + 1;
+        var i = (0, _prelude.findIndex)(sink, this.sinks);
+        // istanbul ignore next
+        if (i >= 0) {
+          this.sinks = (0, _prelude.remove)(i, this.sinks);
         }
 
-        this.sinks = (0, _prelude.remove)((0, _prelude.findIndex)(sink, this.sinks), this.sinks);
-        return this.sinks.length + 1;
+        return this.sinks.length;
       }
     }, {
       key: 'event',
       value: function event(time, value) {
-        // eslint-disable-line complexity
-        if (this.sink === undefined) {
-          return;
-        }
-
         var s = this.sinks;
-        if (s.length === 0) {
-          this.sink.event(time, value);
-          return;
+        if (s.length === 1) {
+          return s[0].event(time, value);
         }
-
-        tryEvent(time, value, this.sink);
         for (var i = 0; i < s.length; ++i) {
           tryEvent(time, value, s[i]);
         }
@@ -160,10 +146,7 @@
     }, {
       key: 'end',
       value: function end(time, value) {
-        // Important: slice first since sink.end may change
-        // the set of sinks
-        var s = this.sinks.slice();
-        tryEnd(time, value, this.sink);
+        var s = this.sinks;
         for (var i = 0; i < s.length; ++i) {
           tryEnd(time, value, s[i]);
         }
@@ -171,10 +154,7 @@
     }, {
       key: 'error',
       value: function error(time, err) {
-        // Important: slice first since sink.error may change
-        // the set of sinks
-        var s = this.sinks.slice();
-        this.sink.error(time, err);
+        var s = this.sinks;
         for (var i = 0; i < s.length; ++i) {
           s[i].error(time, err);
         }
