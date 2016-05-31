@@ -3,8 +3,10 @@
   "version": "1.1.4",
   "description": "Efficient stream sharing for most.js",
   "main": "dist/multicast.js",
+  "typings": "type-definitions/index.d.ts",
   "files": [
-    "dist/multicast.js"
+    "dist/multicast.js",
+    "type-definitions/index.d.ts"
   ],
   "scripts": {
     "build-dist": "mkdir -p dist && rollup src/index.js | babel --presets es2015 --plugins transform-es2015-modules-umd --module-id '@most/multicast' -o dist/multicast.js",
