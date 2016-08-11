@@ -8,5 +8,8 @@ export default {
   sourceMap: true,
   plugins: [
     buble()
-  ]
+  ],
+  globals: {
+    '@most/prelude': 'mostPrelude'
+  }
 }
