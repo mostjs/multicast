@@ -4,7 +4,7 @@ export default {
   entry: 'src/index.js',
   dest: 'dist/multicast.js',
   format: 'umd',
-  moduleName: 'most',
+  moduleName: 'mostMulticast',
   sourceMap: true,
   plugins: [
     buble()
