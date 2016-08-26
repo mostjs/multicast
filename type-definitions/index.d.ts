@@ -9,6 +9,7 @@ import {
 export default function multicast<A>(s: Stream<A>): Stream<A>;
 
 export class MulticastSource<A> implements Source<A>, Sink<A> {
+  constructor(source: Source<A>);
   run (sink: Sink<A>, scheduler: Scheduler): Disposable<A>;
   add(sink: Sink<A>): number;
   remove(sink: Sink<A>): number;
