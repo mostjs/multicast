@@ -7,7 +7,7 @@
   "typings": "type-definitions/index.d.ts",
   "files": [
     "src/*",
-    "dist/multicast.js",
+    "dist/*",
     "type-definitions/index.d.ts"
   ],
   "scripts": {
