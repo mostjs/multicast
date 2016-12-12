@@ -1,4 +1,4 @@
-import dispose from 'most/lib/disposable/dispose'
+import * as dispose from 'most/lib/disposable/dispose'
 
 export default class FakeDisposeSource {
   constructor (disposer, source) {

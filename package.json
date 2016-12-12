@@ -3,7 +3,8 @@
   "version": "1.2.4",
   "description": "Efficient stream sharing for most.js",
   "main": "dist/multicast.js",
-  "jsnext:main": "src/index.js",
+  "jsnext:main": "dist/multicast.es.js",
+  "module": "dist/multicast.es.js",
   "typings": "type-definitions/index.d.ts",
   "files": [
     "src/*",
@@ -11,7 +12,7 @@
     "type-definitions/index.d.ts"
   ],
   "scripts": {
-    "build-dist": "rollup -c",
+    "build-dist": "rollup -c && rollup -c rollup.es.js",
     "build": "npm run build-dist && uglifyjs dist/multicast.js -o dist/multicast.min.js",
     "prepublish": "npm run build",
     "preversion": "npm run build",
