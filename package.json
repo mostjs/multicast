@@ -1,6 +1,6 @@
 {
   "name": "@most/multicast",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Efficient stream sharing for most.js",
   "main": "dist/multicast.js",
   "jsnext:main": "dist/multicast.es.js",
