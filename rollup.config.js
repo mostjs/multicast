@@ -2,9 +2,9 @@ import buble from 'rollup-plugin-buble'
 
 export default {
   entry: 'src/index.js',
-  dest: 'dist/multicast.js',
+  dest: 'dist/multicast-prioritise.js',
   format: 'umd',
-  moduleName: 'mostMulticast',
+  moduleName: 'mostMulticastPrioritise',
   sourceMap: true,
   plugins: [
     buble()
