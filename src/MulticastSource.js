@@ -1,7 +1,32 @@
 import MulticastDisposable from './MulticastDisposable'
 import { tryEvent, tryEnd } from './tryEvent'
 import { dispose, emptyDisposable } from './dispose'
-import { append, remove, findIndex } from '@most/prelude'
+import { remove, findIndex } from '@most/prelude'
+
+function insertWhen (x, a, f) {
+  const l = a.length
+  const b = new Array(l + 1)
+
+  let i = 0
+  for (; i < l; ++i) {
+    if (f(x, a[i])) {
+      break
+    }
+    b[i] = a[i]
+  }
+
+  b[i] = x
+
+  for (; i < l; ++i) {
+    b[i + 1] = a[i]
+  }
+
+  return b
+}
+
+function comparePriority (a, b) {
+  return (a.priority || 0) > (b.priority || 0)
+}
 
 export default class MulticastSource {
   constructor (source) {
@@ -25,7 +50,7 @@ export default class MulticastSource {
   }
 
   add (sink) {
-    this.sinks = append(sink, this.sinks)
+    this.sinks = insertWhen(sink, this.sinks, comparePriority)
     return this.sinks.length
   }
 

@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@most/prelude')) :
   typeof define === 'function' && define.amd ? define(['exports', '@most/prelude'], factory) :
-  (factory((global.mostMulticast = global.mostMulticast || {}),global.mostPrelude));
+  (factory((global.mostMulticastPrioritise = global.mostMulticastPrioritise || {}),global.mostPrelude));
 }(this, (function (exports,_most_prelude) { 'use strict';
 
 var MulticastDisposable = function MulticastDisposable (source, sink) {
@@ -41,6 +41,31 @@ var emptyDisposable = {
   dispose: function dispose$1 () {}
 }
 
+function insertWhen (x, a, f) {
+  var l = a.length
+  var b = new Array(l + 1)
+
+  var i = 0
+  for (; i < l; ++i) {
+    if (f(x, a[i])) {
+      break
+    }
+    b[i] = a[i]
+  }
+
+  b[i] = x
+
+  for (; i < l; ++i) {
+    b[i + 1] = a[i]
+  }
+
+  return b
+}
+
+function comparePriority (a, b) {
+  return (a.priority || 0) > (b.priority || 0)
+}
+
 var MulticastSource = function MulticastSource (source) {
   this.source = source
   this.sinks = []
@@ -62,7 +87,7 @@ MulticastSource.prototype._dispose = function _dispose () {
 };
 
 MulticastSource.prototype.add = function add (sink) {
-  this.sinks = _most_prelude.append(sink, this.sinks)
+  this.sinks = insertWhen(sink, this.sinks, comparePriority)
   return this.sinks.length
 };
 
@@ -100,6 +125,15 @@ MulticastSource.prototype.error = function error (time, err) {
   }
 };
 
+var Prioritise = function Prioritise (priority, source) {
+  this.source = source
+  this.priority = priority
+};
+Prioritise.prototype.run = function run (sink, scheduler) {
+  sink.priority = this.priority
+  return this.source.run(sink, scheduler)
+};
+
 function multicast (stream) {
   var source = stream.source
   return source instanceof MulticastSource
@@ -107,10 +141,18 @@ function multicast (stream) {
     : new stream.constructor(new MulticastSource(source))
 }
 
-exports['default'] = multicast;
+function prioritise (priority, stream) {
+  return !stream
+    ? prioritise.bind(this, priority)
+    : new stream.constructor(new Prioritise(priority, stream.source))
+}
+
+exports.multicast = multicast;
 exports.MulticastSource = MulticastSource;
+exports.prioritise = prioritise;
+exports.Prioritise = Prioritise;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=multicast.js.map
+//# sourceMappingURL=multicast-prioritise.js.map

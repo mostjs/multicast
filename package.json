@@ -1,19 +1,15 @@
 {
-  "name": "@most/multicast",
-  "version": "1.2.5",
+  "name": "@most/multicast-prioritise",
+  "version": "1.0.0",
   "description": "Efficient stream sharing for most.js",
-  "main": "dist/multicast.js",
-  "jsnext:main": "dist/multicast.es.js",
-  "module": "dist/multicast.es.js",
+  "main": "dist/multicast-prioritise.js",
+  "jsnext:main": "dist/multicast-prioritise.es.js",
+  "module": "dist/multicast-prioritise.es.js",
   "typings": "type-definitions/index.d.ts",
-  "files": [
-    "src/*",
-    "dist/*",
-    "type-definitions/index.d.ts"
-  ],
+  "files": ["src/*", "dist/*", "type-definitions/index.d.ts"],
   "scripts": {
     "build-dist": "rollup -c && rollup -c rollup.es.js",
-    "build": "npm run build-dist && uglifyjs dist/multicast.js -o dist/multicast.min.js",
+    "build": "npm run build-dist && uglifyjs dist/multicast-prioritise.js -o dist/multicast-prioritise.min.js",
     "prepublish": "npm run build",
     "preversion": "npm run build",
     "unit-test": "istanbul cover _mocha -- -r buba/register",
@@ -22,23 +18,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mostjs/multicast.git"
+    "url": "git+https://github.com/beyond-labs/multicast-prioritise.git"
   },
-  "keywords": [
-    "most",
-    "mostjs",
-    "reactive",
-    "event",
-    "async",
-    "streams",
-    "multicast"
-  ],
-  "author": "Tylor Steinberer <tlsteinberger167@gmail.com> (github.com/TylorS)",
+  "keywords": ["most", "mostjs", "reactive", "event", "async", "streams", "multicast"],
+  "author": "Ashton Six <me@ashtonsix.com> (github.com/ashtonsix)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mostjs/multicast/issues"
+    "url": "https://github.com/beyond-labs/multicast-prioritise/issues"
   },
-  "homepage": "https://github.com/mostjs/multicast#readme",
+  "homepage": "https://github.com/beyond-labs/multicast-prioritise#readme",
   "devDependencies": {
     "@most/eslint-config-most": "^1.0.3",
     "assert": "^1.4.1",

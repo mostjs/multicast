@@ -1,4 +1,4 @@
-import { append, remove, findIndex } from '@most/prelude';
+import { remove, findIndex } from '@most/prelude';
 
 var MulticastDisposable = function MulticastDisposable (source, sink) {
   this.source = source
@@ -37,6 +37,31 @@ var emptyDisposable = {
   dispose: function dispose$1 () {}
 }
 
+function insertWhen (x, a, f) {
+  var l = a.length
+  var b = new Array(l + 1)
+
+  var i = 0
+  for (; i < l; ++i) {
+    if (f(x, a[i])) {
+      break
+    }
+    b[i] = a[i]
+  }
+
+  b[i] = x
+
+  for (; i < l; ++i) {
+    b[i + 1] = a[i]
+  }
+
+  return b
+}
+
+function comparePriority (a, b) {
+  return (a.priority || 0) > (b.priority || 0)
+}
+
 var MulticastSource = function MulticastSource (source) {
   this.source = source
   this.sinks = []
@@ -58,7 +83,7 @@ MulticastSource.prototype._dispose = function _dispose () {
 };
 
 MulticastSource.prototype.add = function add (sink) {
-  this.sinks = append(sink, this.sinks)
+  this.sinks = insertWhen(sink, this.sinks, comparePriority)
   return this.sinks.length
 };
 
@@ -96,6 +121,15 @@ MulticastSource.prototype.error = function error (time, err) {
   }
 };
 
+var Prioritise = function Prioritise (priority, source) {
+  this.source = source
+  this.priority = priority
+};
+Prioritise.prototype.run = function run (sink, scheduler) {
+  sink.priority = this.priority
+  return this.source.run(sink, scheduler)
+};
+
 function multicast (stream) {
   var source = stream.source
   return source instanceof MulticastSource
@@ -103,5 +137,11 @@ function multicast (stream) {
     : new stream.constructor(new MulticastSource(source))
 }
 
-export { MulticastSource };export default multicast;
-//# sourceMappingURL=multicast.es.js.map
+function prioritise (priority, stream) {
+  return !stream
+    ? prioritise.bind(this, priority)
+    : new stream.constructor(new Prioritise(priority, stream.source))
+}
+
+export { multicast, MulticastSource, prioritise, Prioritise };
+//# sourceMappingURL=multicast-prioritise.es.js.map

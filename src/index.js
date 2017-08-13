@@ -1,4 +1,5 @@
 import MulticastSource from './MulticastSource'
+import Prioritise from './Prioritise'
 
 function multicast (stream) {
   const source = stream.source
@@ -7,4 +8,10 @@ function multicast (stream) {
     : new stream.constructor(new MulticastSource(source))
 }
 
-export {multicast as default, MulticastSource}
+function prioritise (priority, stream) {
+  return !stream
+    ? prioritise.bind(this, priority)
+    : new stream.constructor(new Prioritise(priority, stream.source))
+}
+
+export {multicast, MulticastSource, prioritise, Prioritise}
