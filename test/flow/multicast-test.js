@@ -1,7 +1,7 @@
 // @flow
 
 import { Stream, just } from 'most'
-import multicast, { MulticastSource } from '../src/index.js'
+import multicast, { MulticastSource } from '../../src'
 
 // Save type of stream
 multicast(just(1)).observe((d: number) => {})
