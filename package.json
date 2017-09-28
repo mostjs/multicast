@@ -61,9 +61,6 @@
     "sinon": "^1.17.5",
     "uglify-js": "^2.7.1"
   },
-  "peerDependencies": {
-    "most": "^1.0.1"
-  },
   "dependencies": {
     "@most/prelude": "^1.4.0"
   }
