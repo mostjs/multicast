@@ -1,3 +1,6 @@
 node_modules/
 .idea/
-/coverage/
+coverage/
+dist/multicast.es.js
+dist/multicast.es.js.map
+dist/multicast.js.flow
